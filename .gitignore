@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.idea/
+.vscode/
+# Caches de collecte Scryfall (regénérables)
+donnees/cache_*.json
+# CSV regénérable avec « python -m src.main collecter » (conditions Scryfall : pas de republication)
+donnees/commandants_top1000.csv
