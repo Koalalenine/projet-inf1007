@@ -1,0 +1,16 @@
+# Fiche de décisions
+
+> Les colonnes « Validé par l'auxiliaire (date) » se remplissent **après** chaque validation de 5 minutes
+> (A, B, C, D). Les justifications ci-dessous sont une première rédaction : relisez-les et reformulez-les
+> avec vos propres raisons avant la remise.
+
+| Choix | Options envisagées | Choix retenu et justification | Validé par l'auxiliaire (date) |
+|---|---|---|---|
+| Domaine | Immobilier ; sport ; Magic: The Gathering | **Magic: The Gathering** (culture et loisirs). Domaine que nous connaissons, ce qui aide à juger si les résultats sont plausibles et à repérer les erreurs de données. Utilité : un joueur ou un créateur de deck peut estimer la popularité d'un commandant selon ses effets. Pas de domaine sensible, donc pas d'avertissement obligatoire (on gardera tout de même une mention « exercice pédagogique »). | _à remplir (validation A)_ |
+| Jeu de données | Un jeu Kaggle ; Scryfall « Oracle Cards » (toutes les cartes) ; **top 1000 commandants + otags** | **Top 1000 commandants + otags**, construit par l'API Scryfall. Les jeux Kaggle trouvés sont soit trop généraux, soit sans notion de popularité. Les critères de la section 2 sont vérifiés par `python -m src.main verifier` : 1000 lignes (entre 500 et 50 000), plus de 5 colonnes d'entrée, cible numérique, variables numériques (`cmc`, `annee`, `nb_tags`) et catégorielles (`identite_couleur`, `type_principal`), aucune donnée personnelle. Licence : usage gratuit autorisé par Scryfall/Fan Content Policy ; CSV non redistribué dans le dépôt (voir README). | _à remplir (validation B)_ |
+| Définition de la cible | `edhrec_rank` brut (toutes cartes) ; **position parmi les commandants** | **Position (1 à 1000)** parmi les commandants : le rang EDHREC brut mélange toutes les cartes et ses valeurs sont difficiles à interpréter ; une position de 1 à 1000 se lit directement (« 15e commandant le plus populaire »). Contrepartie : la cible dépend de la date de collecte (classement changeant), notée dans le README. | _à remplir_ |
+| Liste des otags | 30 tags de départ (`TAGS_PAR_DEFAUT`) ; autres tags à explorer sur Scryfall Tagger | Les 30 tags de départ couvrent les grands rôles d'un deck (accélération de mana, pioche, retrait, recursion, jetons, etc.). **Critère à compléter** : lancer `collecter`, lire les tags signalés « AUCUN RÉSULTAT », remplacer ou retirer ceux qui sont faux, et noter ici la liste finale. Les noms exacts n'ont pas pu être vérifiés hors ligne. | _à remplir_ |
+| Versionnement du CSV | Pousser le CSV dans `donnees/` ; ne pas le versionner et fournir la commande de collecte | **CSV non versionné** : les conditions de Scryfall interdisent de simplement republier ses données et le dépôt est public. La commande `collecter` le régénère (cache JSON local). | _à remplir_ |
+| Cible et métrique | _(volet 2)_ | | |
+| Modèle | _(volet 2)_ | | |
+| Technologie d'interface | _(volet 3)_ | | |
