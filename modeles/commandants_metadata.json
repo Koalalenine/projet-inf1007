@@ -1,0 +1,213 @@
+{
+  "date_entrainement": "2026-11-19",
+  "cible": "position",
+  "type_probleme": "regression",
+  "modele": "RandomForestRegressor",
+  "metrique_principale": "MAE",
+  "metriques": {
+    "mae_modele": 247.26960375,
+    "mae_reference_moyenne": 248.8240625,
+    "r2_modele": -0.07745012804076712
+  },
+  "colonnes_entree": [
+    "cmc",
+    "annee",
+    "identite_couleur",
+    "type_principal",
+    "tag_ramp",
+    "tag_mana-rock",
+    "tag_mana-dork",
+    "tag_removal",
+    "tag_board-wipe",
+    "tag_draw",
+    "tag_tutor",
+    "tag_counterspell",
+    "tag_sacrifice-outlet",
+    "tag_reanimate",
+    "tag_recursion",
+    "tag_repeatable-token-generator",
+    "tag_lifegain",
+    "tag_lifedrain",
+    "tag_burn",
+    "tag_evasion",
+    "tag_protection",
+    "tag_gives-haste",
+    "tag_cost-reducer",
+    "tag_extra-turn",
+    "tag_copy-permanent",
+    "tag_blink",
+    "tag_mill",
+    "tag_discard",
+    "tag_repeatable-treasures",
+    "tag_repeatable-proliferate",
+    "tag_anthem",
+    "nb_tags"
+  ],
+  "variables_categorielles": {
+    "identite_couleur": [
+      "B",
+      "BG",
+      "BGR",
+      "BGRUW",
+      "BGU",
+      "BGUW",
+      "BGW",
+      "BR",
+      "BRU",
+      "BRUW",
+      "BRW",
+      "BU",
+      "BUW",
+      "BW",
+      "C",
+      "G",
+      "GR",
+      "GRU",
+      "GRUW",
+      "GRW",
+      "GU",
+      "GUW",
+      "GW",
+      "R",
+      "RU",
+      "RUW",
+      "RW",
+      "U",
+      "UW",
+      "W"
+    ],
+    "type_principal": [
+      "Legendary Artifact",
+      "Legendary Artifact Creature",
+      "Legendary Creature",
+      "Legendary Enchantment",
+      "Legendary Enchantment Creature",
+      "Legendary Planeswalker"
+    ]
+  },
+  "variables_numeriques": {
+    "cmc": {
+      "minimum": 0.0,
+      "maximum": 13.0
+    },
+    "annee": {
+      "minimum": 2000.0,
+      "maximum": 2026.0
+    },
+    "tag_ramp": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_mana-rock": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_mana-dork": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_removal": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_board-wipe": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_draw": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_tutor": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_counterspell": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_sacrifice-outlet": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_reanimate": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_recursion": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_repeatable-token-generator": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_lifegain": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_lifedrain": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_burn": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_evasion": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_protection": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_gives-haste": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_cost-reducer": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_extra-turn": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_copy-permanent": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_blink": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_mill": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_discard": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_repeatable-treasures": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_repeatable-proliferate": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tag_anthem": {
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "nb_tags": {
+      "minimum": 0.0,
+      "maximum": 8.0
+    }
+  },
+  "taille_jeu_de_donnees": 1000,
+  "taille_test": 0.2,
+  "graine_aleatoire": 42
+}

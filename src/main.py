@@ -11,7 +11,7 @@ import os
 
 import pandas as pd
 
-from src import donnees
+from src import donnees, modele
 from src.exceptions import DonneeInvalideError, ScryfallError
 
 DOSSIER = "donnees"
@@ -19,6 +19,10 @@ CSV = os.path.join(DOSSIER, "commandants_top1000.csv")
 CACHE_TOP = os.path.join(DOSSIER, "cache_top.json")
 CACHE_TAGS = os.path.join(DOSSIER, "cache_otags.json")
 GRAPHIQUE = os.path.join(DOSSIER, "identites_couleur.png")
+DOSSIER_MODELES = "modeles"
+FICHIER_MODELE = os.path.join(DOSSIER_MODELES, "commandants_random_forest.joblib")
+METADONNEES_MODELE = os.path.join(DOSSIER_MODELES, "commandants_metadata.json")
+GRAPHIQUE_EVALUATION = os.path.join(DOSSIER_MODELES, "predit_contre_reel.png")
 
 
 def commande_collecter(nombre: int, tags: list[str]) -> None:
@@ -44,6 +48,22 @@ def commande_verifier() -> None:
         print(f"[{'OK' if ok else 'ÉCHEC'}] {critere}")
 
 
+def commande_entrainer() -> None:
+    """Entraîne et évalue le modèle, puis enregistre ses fichiers."""
+    resultat = modele.entrainer_depuis_csv(
+        CSV,
+        FICHIER_MODELE,
+        METADONNEES_MODELE,
+        GRAPHIQUE_EVALUATION,
+    )
+    print(f"MAE du modèle : {resultat.metriques['mae_modele']:.1f} positions")
+    print(f"MAE de la référence moyenne : {resultat.metriques['mae_reference_moyenne']:.1f} positions")
+    print(f"R² du modèle : {resultat.metriques['r2_modele']:.3f}")
+    print(f"Modèle enregistré dans {FICHIER_MODELE}")
+    print(f"Métadonnées enregistrées dans {METADONNEES_MODELE}")
+    print(f"Graphique enregistré dans {GRAPHIQUE_EVALUATION}")
+
+
 def main() -> None:
     """Analyse les arguments et exécute la commande demandée."""
     parseur = argparse.ArgumentParser(description="Projet 2 INF1007 : commandants et otags")
@@ -53,13 +73,16 @@ def main() -> None:
     collecte.add_argument("--tags", default=",".join(donnees.TAGS_PAR_DEFAUT),
                           help="otags séparés par des virgules")
     sous.add_parser("verifier", help="vérifier les critères du jeu de données")
+    sous.add_parser("entrainer", help="entraîner, évaluer et sauvegarder le modèle")
     args = parseur.parse_args()
 
     try:
         if args.commande == "collecter":
             commande_collecter(args.nombre, [t.strip() for t in args.tags.split(",") if t.strip()])
-        else:
+        elif args.commande == "verifier":
             commande_verifier()
+        else:
+            commande_entrainer()
     except (ScryfallError, DonneeInvalideError) as erreur:
         print(f"Erreur : {erreur}")
 
