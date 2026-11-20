@@ -1,6 +1,6 @@
 # Projet 2 INF1007 : popularité des commandants Magic (Scryfall + otags)
 
-> **Statut : volet 1 terminé.** Le modèle du volet 2 est entraîné et évalué; la validation C n'a pas été présentée faute de temps. Le volet 3 reste à faire.
+> **Statut : volets 1, 2 et 3 réalisés.** Les validations C (modèle) et D (technologie d'interface) sont à présenter ou à documenter dans `DECISIONS.md`.
 
 ## Description
 
@@ -52,6 +52,7 @@ pip install -r requirements.txt
 python -m src.main collecter     # télécharge, construit donnees/commandants_top1000.csv
 python -m src.main verifier      # vérifie les critères de la section 2
 python -m src.main entrainer     # entraîne, évalue et sauvegarde le modèle
+python -m src.main interface     # ouvre l'interface graphique (modèle déjà sauvegardé)
 pytest                           # tests (hors ligne)
 python -m coverage run -m pytest
 python -m coverage report -m
@@ -61,15 +62,24 @@ La collecte fait environ 150 à 400 requêtes (quelques minutes) ; les résultat
 cache dans `donnees/cache_*.json` (ignorés par Git). Un tag qui ne renvoie aucun résultat est
 signalé : corrigez-le dans `TAGS_PAR_DEFAUT` (`src/donnees.py`) ou avec `--tags a,b,c`.
 
+**Interface.** L'interface utilise Tkinter (inclus avec Python). Sous Linux, installez-le au besoin :
+`sudo apt install python3-tk`. Le modèle et ses métadonnées sont versionnés dans `modeles/` : l'interface se
+lance donc sans collecte ni entraînement préalable.
+
 ## Structure
 
 ```
 src/exceptions.py   exceptions personnalisées (DonneeInvalideError, ScryfallError)
 src/donnees.py      appels API, cache JSON, construction du DataFrame, vérification des critères
 src/modele.py       séparation, référence, entraînement, évaluation et sauvegarde du modèle
+src/variables.py    classe abstraite Variable et enfants VariableNumerique, VariableCategorielle, VariableBinaire
+src/predicteur.py   chargement du modèle, validation des saisies, prédiction, fourchette, importances
+src/historique.py   historique des prédictions (CSV)
+src/graphiques.py   graphique Matplotlib de l'interface (importance des variables, position prédite)
+src/interface.py    fenêtre Tkinter (classe Application) : appelle la logique, n'en contient pas
 src/main.py         point d'entrée (ligne de commande)
 tests/              tests pytest (API simulée et logique du modèle, aucun accès réseau)
-donnees/            CSV (généré, non versionné) et graphique d'exploration
+donnees/            CSV (généré, non versionné), graphique d'exploration, historique (local, non versionné)
 modeles/            pipeline .joblib, métadonnées JSON et graphique d'évaluation
 ```
 
@@ -86,26 +96,51 @@ Le pipeline est sauvegardé dans `modeles/commandants_random_forest.joblib`, ses
 dans `modeles/commandants_metadata.json`, et le graphique prédit/réel dans `modeles/predit_contre_reel.png`.
 Le modèle n'est pas réentraîné au lancement de l'interface.
 
+## Interface graphique
+
+- **Saisies** : un champ par variable, construit à partir de `modeles/commandants_metadata.json` : champs
+  numériques (coût de mana, année), listes déroulantes (identité de couleur, type) et 27 cases à cocher (otags).
+  `nb_tags` n'est pas demandé : il est calculé comme le nombre de cases cochées, comme dans le jeu de données.
+- **Validation** : une saisie vide, non numérique, hors intervalle ou non entière affiche un message clair
+  (un par champ fautif) ; aucun traceback n'est montré.
+- **Prédiction** : phrase en français, fourchette (10e à 90e percentile des 100 arbres de la forêt) et niveau de
+  confiance déduit de l'erreur du modèle comparée à la référence. La fourchette décrit le désaccord entre arbres ;
+  ce n'est pas un intervalle de confiance statistique.
+- **Graphique intégré** : importance des variables (colonnes encodées regroupées par variable) et position
+  prédite avec sa fourchette, dessinés sur une `Figure` Matplotlib dans la fenêtre.
+- **Historique** : chaque prédiction est ajoutée à `donnees/historique_predictions.csv` et consultable avec le
+  bouton « Historique ».
+- **Avertissement** : le domaine n'est pas sensible, mais la fenêtre rappelle qu'il s'agit d'un exercice
+  pédagogique et que le modèle est peu fiable (voir les résultats ci-dessus).
+- **Conception** : `Application` contient (composition) un `Predicteur` et un `Historique` ; `Predicteur` contient
+  la liste des `Variable`. Les trois classes enfants redéfinissent `valider` (polymorphisme). L'exception
+  personnalisée `SaisieInvalideError` hérite de `DonneeInvalideError`.
+
 ## Outils du chapitre 7
 
 - **Décorateur** `@chronometre` : affiche la durée des étapes de collecte.
 - **Générateur** `lire_csv_par_blocs` : lit le CSV par blocs de lignes.
+- **Lambda** : clé de tri des importances (`Predicteur.importances`) et de l'historique affiché (`interface.py`).
 - La MAE est calculée de façon vectorisée avec NumPy et comparée à scikit-learn dans un test.
 
 ## Couverture de tests
 
-Résultat de `python -m coverage run -m pytest` puis `python -m coverage report` (27 tests, tous réussis) :
+Résultat de `python -m coverage run -m pytest` puis `python -m coverage report` (71 tests, tous réussis) :
 
 | Module | Couverture |
 |---|---|
 | `src/donnees.py` | 76 % |
 | `src/modele.py` | 89 % |
+| `src/variables.py` | 95 % |
+| `src/historique.py` | 95 % |
+| `src/predicteur.py` | 96 % |
+| `src/graphiques.py` | 100 % |
 | `src/exceptions.py` | 100 % |
-| **Total (fichiers de tests inclus)** | **89 %** |
+| **Total (fichiers de tests inclus)** | **93 %** |
 
-Les lignes non couvertes de `donnees.py` sont les fonctions qui font de vrais appels réseau
-(`_get`, `collecter_*`) et la production du graphique. `src/main.py` n'est pas mesuré tant qu'aucun
-test ne l'importe. À mettre à jour après les volets 2 et 3.
+Les lignes non couvertes de `donnees.py` sont les fonctions qui font de vrais appels réseau. `src/interface.py`
+et `src/main.py` ne sont pas testés automatiquement (fenêtre Tkinter et ligne de commande) : leur logique est dans
+les modules testés, et l'interface a été vérifiée à la main.
 
 ## Documentation consultée
 
@@ -115,6 +150,8 @@ test ne l'importe. À mettre à jour après les volets 2 et 3.
   `OneHotEncoder` (https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html),
   `RandomForestRegressor` (https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html)
   et MAE (https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_absolute_error.html)
-- Technologie d'interface : _à compléter au volet 3_
+- Technologie d'interface : module `tkinter` (https://docs.python.org/3/library/tkinter.html), widgets `ttk`
+  (https://docs.python.org/3/library/tkinter.ttk.html) et intégration de Matplotlib dans Tkinter
+  (https://matplotlib.org/stable/gallery/user_interfaces/embedding_in_tk_sgskip.html)
 - API Scryfall : https://scryfall.com/docs/api et syntaxe de recherche (`order:`, `otag:`) :
   https://scryfall.com/docs/syntax
