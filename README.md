@@ -33,6 +33,15 @@ Problème de **régression**.
   `type_principal`, `nb_tags`, et une colonne `tag_<nom>` (0/1) par otag.
 - Aucune donnée personnelle.
 
+## Exploration et préparation initiale
+
+Le CSV final contient 1 000 lignes et 34 colonnes, sans valeur manquante. Les bornes IQR signalent
+17 valeurs de `cmc`, 32 années et 5 valeurs de `nb_tags` éloignées du reste. Elles restent plausibles
+pour des cartes Magic (cartes anciennes, coût élevé ou nombreuses fonctions) ; aucune ligne n'a donc
+été supprimée. Les tags qui ne renvoyaient aucun commandant ont été vérifiés : quatre ont été remplacés
+par des tags plus précis et trois retirés. Les choix et les nombres de résultats sont détaillés dans
+`DECISIONS.md`. Le graphique exploratoire est `donnees/identites_couleur.png`.
+
 ## Installation et lancement
 
 ```bash
@@ -43,7 +52,8 @@ pip install -r requirements.txt
 python -m src.main collecter     # télécharge, construit donnees/commandants_top1000.csv
 python -m src.main verifier      # vérifie les critères de la section 2
 pytest                           # tests (hors ligne)
-coverage run -m pytest && coverage report -m
+python -m coverage run -m pytest
+python -m coverage report -m
 ```
 
 La collecte fait environ 150 à 400 requêtes (quelques minutes) ; les résultats sont mis en

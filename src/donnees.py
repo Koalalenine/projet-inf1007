@@ -27,10 +27,10 @@ REQUETE_COMMANDANTS = "is:commander f:commander"
 TAGS_PAR_DEFAUT: list[str] = [
     "ramp", "mana-rock", "mana-dork", "removal", "board-wipe", "draw",
     "tutor", "counterspell", "sacrifice-outlet", "reanimate", "recursion",
-    "token-generator", "lifegain", "lifedrain", "burn", "evasion",
-    "protection", "haste-enabler", "cost-reducer", "extra-turn",
-    "copy-permanent", "blink", "mill", "discard", "treasure",
-    "proliferate", "voltron", "stax", "combo-piece", "anthem",
+    "repeatable-token-generator", "lifegain", "lifedrain", "burn", "evasion",
+    "protection", "gives-haste", "cost-reducer", "extra-turn",
+    "copy-permanent", "blink", "mill", "discard",
+    "repeatable-treasures", "repeatable-proliferate", "anthem",
 ]
 
 
