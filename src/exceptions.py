@@ -7,3 +7,6 @@ class DonneeInvalideError(Exception):
 
 class ScryfallError(Exception):
     """Levée quand l'API Scryfall est injoignable ou répond avec une erreur."""
+
+class SaisieInvalideError(DonneeInvalideError):
+    """Levée quand une saisie de l'utilisateur est vide, mal formée ou hors intervalle."""
