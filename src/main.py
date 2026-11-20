@@ -1,8 +1,10 @@
-"""Point d'entrée. Volet 1 : collecte des données.
+"""Point d'entrée : collecte, vérification, entraînement et interface graphique.
 
 Usage (depuis la racine du dépôt) :
     python -m src.main collecter [--nombre 1000] [--tags ramp,removal,...]
     python -m src.main verifier
+    python -m src.main entrainer
+    python -m src.main interface
 """
 from __future__ import annotations
 
@@ -12,6 +14,8 @@ import os
 import pandas as pd
 
 from src import donnees, modele
+from src.historique import Historique
+from src.predicteur import Predicteur
 from src.exceptions import DonneeInvalideError, ScryfallError
 
 DOSSIER = "donnees"
@@ -23,6 +27,7 @@ DOSSIER_MODELES = "modeles"
 FICHIER_MODELE = os.path.join(DOSSIER_MODELES, "commandants_random_forest.joblib")
 METADONNEES_MODELE = os.path.join(DOSSIER_MODELES, "commandants_metadata.json")
 GRAPHIQUE_EVALUATION = os.path.join(DOSSIER_MODELES, "predit_contre_reel.png")
+FICHIER_HISTORIQUE = os.path.join(DOSSIER, "historique_predictions.csv")
 
 
 def commande_collecter(nombre: int, tags: list[str]) -> None:
@@ -64,6 +69,17 @@ def commande_entrainer() -> None:
     print(f"Graphique enregistré dans {GRAPHIQUE_EVALUATION}")
 
 
+def commande_interface() -> None:
+    """Charge le modèle sauvegardé (sans le ré-entraîner) et ouvre la fenêtre."""
+    predicteur = Predicteur(FICHIER_MODELE, METADONNEES_MODELE)
+    try:
+        from src.interface import Application  # import tardif : Tkinter n'est pas requis pour les tests
+    except ImportError as erreur:
+        raise DonneeInvalideError(
+            f"Tkinter est introuvable ({erreur}). Sous Linux : sudo apt install python3-tk.") from erreur
+    Application(predicteur, Historique(FICHIER_HISTORIQUE)).lancer()
+
+
 def main() -> None:
     """Analyse les arguments et exécute la commande demandée."""
     parseur = argparse.ArgumentParser(description="Projet 2 INF1007 : commandants et otags")
@@ -74,6 +90,7 @@ def main() -> None:
                           help="otags séparés par des virgules")
     sous.add_parser("verifier", help="vérifier les critères du jeu de données")
     sous.add_parser("entrainer", help="entraîner, évaluer et sauvegarder le modèle")
+    sous.add_parser("interface", help="ouvrir l'interface graphique")
     args = parseur.parse_args()
 
     try:
@@ -81,6 +98,8 @@ def main() -> None:
             commande_collecter(args.nombre, [t.strip() for t in args.tags.split(",") if t.strip()])
         elif args.commande == "verifier":
             commande_verifier()
+        elif args.commande == "interface":
+            commande_interface()
         else:
             commande_entrainer()
     except (ScryfallError, DonneeInvalideError) as erreur:
