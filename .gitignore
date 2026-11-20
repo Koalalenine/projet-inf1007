@@ -11,3 +11,5 @@ htmlcov/
 donnees/cache_*.json
 # CSV regénérable avec « python -m src.main collecter » (conditions Scryfall : pas de republication)
 donnees/commandants_top1000.csv
+# Historique des prédictions de l'utilisateur (données locales)
+donnees/historique_predictions.csv
