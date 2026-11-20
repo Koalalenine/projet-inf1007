@@ -148,3 +148,17 @@ def test_recuperer_cartes_429_persistant(monkeypatch):
     monkeypatch.setattr(donnees.time, "sleep", lambda s: None)
     with pytest.raises(ScryfallError):
         donnees.recuperer_cartes("q")
+
+
+def test_collecter_otags_pause_entre_chaque_requete(monkeypatch):
+    pauses = []
+    monkeypatch.setattr(donnees.time, "sleep", pauses.append)
+    monkeypatch.setattr(
+        donnees.requests,
+        "get",
+        lambda *a, **k: FausseReponse(200, {"data": [], "has_more": False}),
+    )
+
+    donnees.collecter_otags({"a"}, ["premier", "deuxieme"])
+
+    assert pauses == [donnees.PAUSE_ENTRE_REQUETES] * 2

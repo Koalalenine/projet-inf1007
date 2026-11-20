@@ -14,7 +14,7 @@ Problème de **régression**.
 - **Source** : API Scryfall (https://scryfall.com/docs/api). L'ordre de popularité vient de
   `order:edhrec` (données EDHREC reprises par Scryfall). Les otags viennent de Scryfall Tagger
   (tags de la communauté), interrogés via le filtre de recherche `otag:`.
-- **Date de collecte** : _AAAA-MM-JJ, à inscrire le jour où vous lancez `python -m src.main collecter`_
+- **Date de collecte** : 2026-11-19
   (le classement EDHREC change avec le temps ; la date permet de situer les résultats).
 - **Licence / conditions d'utilisation** : pas de licence de type CC. Scryfall fournit ses données
   gratuitement, dans le cadre de la *Wizards of the Coast Fan Content Policy*, « pour créer des logiciels
@@ -22,7 +22,7 @@ Problème de **régression**.
   Notre usage (projet pédagogique, recherche, application gratuite) entre dans ce cadre. Conditions à respecter :
   ne pas faire payer l'accès aux données, ne pas simplement republier ou redistribuer les données de
   Scryfall (le logiciel doit apporter une valeur ajoutée), ne pas utiliser le nom ou les logos de Scryfall
-  comme si Scryfall approuvait le projet, et ajouter un délai de 50 à 100 ms entre les requêtes (fait dans
+  comme si Scryfall approuvait le projet, et ajouter un délai de 200 ms avant chaque requête (fait dans
   `PAUSE_ENTRE_REQUETES`).
 - **Redistribution du CSV** : par prudence, le CSV **n'est pas versionné** dans ce dépôt public (voir
   `.gitignore`) : chaque utilisateur le régénère avec `python -m src.main collecter`. Le graphique
@@ -68,13 +68,13 @@ modeles/            modèle sauvegardé + métadonnées JSON (volet 2)
 
 ## Couverture de tests
 
-Résultat de `coverage run -m pytest && coverage report` (17 tests, tous réussis) :
+Résultat de `python -m coverage run -m pytest` puis `python -m coverage report` (18 tests, tous réussis) :
 
 | Module | Couverture |
 |---|---|
-| `src/donnees.py` | 65 % |
+| `src/donnees.py` | 76 % |
 | `src/exceptions.py` | 100 % |
-| **Total (fichiers de tests inclus)** | **79 %** |
+| **Total (fichiers de tests inclus)** | **86 %** |
 
 Les lignes non couvertes de `donnees.py` sont les fonctions qui font de vrais appels réseau
 (`_get`, `collecter_*`) et la production du graphique. `src/main.py` n'est pas mesuré tant qu'aucun

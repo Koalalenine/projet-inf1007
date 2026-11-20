@@ -18,7 +18,7 @@ from src.exceptions import DonneeInvalideError, ScryfallError
 
 BASE = "https://api.scryfall.com"
 HEADERS = {"User-Agent": "INF1007Projet2/1.0", "Accept": "application/json"}
-PAUSE_ENTRE_REQUETES = 0.1  # Scryfall : environ 10 requêtes/seconde au maximum
+PAUSE_ENTRE_REQUETES = 0.2  # Marge prudente sous la limite d'environ 10 requêtes/seconde
 REQUETE_COMMANDANTS = "is:commander f:commander"
 
 # Liste de départ. À VÉRIFIER sur tagger.scryfall.com : un tag mal orthographié
@@ -52,6 +52,7 @@ def _get(url: str, params: dict | None) -> requests.Response:
     Lève ScryfallError si le réseau échoue ou si la limite persiste.
     """
     for tentative in range(3):
+        time.sleep(PAUSE_ENTRE_REQUETES)
         try:
             reponse = requests.get(url, headers=HEADERS, params=params, timeout=30)
         except requests.RequestException as erreur:
@@ -85,7 +86,6 @@ def recuperer_cartes(requete: str, maximum: int | None = None) -> list[dict]:
             return cartes[:maximum]
         url = donnees.get("next_page") if donnees.get("has_more") else None
         params = None  # next_page contient déjà tous les paramètres
-        time.sleep(PAUSE_ENTRE_REQUETES)
     return cartes
 
 
